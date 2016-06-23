@@ -3,9 +3,11 @@ LOCKIN
 
 **(We will soon cleanup the LOCKIN code further)**
 
-LOCKIN is a lock library that includes several lock algorithm implementations mainly in header files for ease of use. In particular, LOCKIN includes the `lock_in.h` header file that can be used to (i) select one of LOCKIN's lock libraries, and (ii) to overload the traditional `pthread_mutex_lock` interface. Essentially, you can use LOCKIN to easily modify the pthread mutex locks in a system with practically zero effort.
+LOCKIN is a lock library that includes several lock algorithm implementations mainly in header files for ease of use. In particular, LOCKIN includes the `lock_in.h` header file that can be used to (i) select one of LOCKIN's lock algorithms, and (ii) to overload the traditional `pthread_mutex_lock` interface. Essentially, you can use LOCKIN to easily modify the pthread mutex locks in a system with practically zero effort.
 
-Only CLH and MCS locks have corresponding source files, thus applications that use one of these two locks must link with `liblockin.a` (`-llockin`).
+LOCKIN includes our new optimized version of pthreads mutex locks, namely MUTEXEE. MUTEXEE is designed to be a faster, more energy efficient variant of pthread mutexes.
+
+Addtionally, LOCKIN includes tests that evaluate the power consumption and the energy efficiency of locks, as well as various lock-related operations, such as spinning, sleeping (i.e., `futex` calls), and more.
 
 
 * Website             : http://lpd.epfl.ch/site/lockin
@@ -37,6 +39,7 @@ You can select the lock algorithm to use in `lock_in.h`, or by passing the `LOCK
 In our tests, you can choose the lock algorithm by invoking:  
 `make LOCK_IN=TICKET`
 
+Only CLH and MCS locks have corresponding source files, thus applications that use one of these two locks must link with `liblockin.a` (`-llockin`).
 
 Compilation Options
 -------------------
@@ -45,9 +48,9 @@ Compilation Options
 * `DEBUG=1` to enable compilation with debug symbols and `-O0`;
 * `PAUSE_IN=pausetype` to change the pausing technique (see `lock_in.h`);
 * `POWER=0` to disable power measurements;
-* `TIMEOUT=value-ns` to configure the timeout of `MUTEXEEF` lock;
+* `TIMEOUT=value-ns` to configure the timeout of `MUTEXEEF` lock.
 
-For example, `make LOCK_IN=TAS POWER=0` will build the stress tests (see below) with TAS lock and no power measurements.
+For example, `make LOCK_IN=TAS POWER=0` builds the stress tests (see below) with TAS lock and no power measurements.
 
 
 Benchmarks
@@ -73,11 +76,11 @@ Scripts
 -------
 
 You can find many useful scripts in the `scripts` folder. In particular:
-* `scripts/atc` includes the scripts that we used to run the experiments for our ATC paper;
+* `scripts/atc/` includes the scripts that we used to run the experiments for our ATC paper;
 * `scripts/make_*`scripts can be used to compile various tests (e.g., `make_all_stress_tests.sh`).
 
 
 Configuration
 -------------
 
-If you want thread pinning to work properly, you need to setup your platform in `platform_defs.h` (see for example the `XEON2` platform). You will then need to pass the name of the platform in the Makefile (again, look for `XEON2` as an example.
+If you want thread pinning to work properly, you need to setup your platform in `platform_defs.h` (see for example the `XEON2` platform). You will then need to pass the name of the platform in the Makefile (again, look for `XEON2` as an example).
