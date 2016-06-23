@@ -1,8 +1,6 @@
 LOCKIN
 =======
 
-**(We will soon cleanup the LOCKIN code further. Please report any bugs you might find.)**
-
 LOCKIN is a lock library that includes several lock algorithm implementations mainly in header files for ease of use. In particular, LOCKIN includes the `lock_in.h` header file that can be used to (i) select one of LOCKIN's lock algorithms, and (ii) to overload the traditional `pthread_mutex_lock` interface. Essentially, you can use LOCKIN to easily modify the pthread mutex locks in a system with practically zero effort.
 
 LOCKIN includes our new optimized version of pthreads mutex locks, namely MUTEXEE. MUTEXEE is designed to be a faster, more energy efficient variant of pthread mutexes.
@@ -10,6 +8,8 @@ LOCKIN includes our new optimized version of pthreads mutex locks, namely MUTEXE
 Addtionally, LOCKIN includes tests that evaluate the power consumption and the energy efficiency of locks, as well as various lock-related operations, such as spinning, sleeping (i.e., `futex` calls), and more.
 
 LOCKIN currently only works on x86 Linux platforms.
+
+**(We will soon cleanup the LOCKIN code further. Please report any bugs you might find.)**
 
 * Website             : http://lpd.epfl.ch/site/lockin
 * Author              : Vasileios Trigonakis <vasileios.trigonakis@epfl.ch>,
