@@ -1,4 +1,4 @@
-#include "ecdf.h"
+#include "cdf.h"
 #include "math.h"
 
 #define DBL_LARGE 1e9
