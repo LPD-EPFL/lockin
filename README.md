@@ -72,6 +72,7 @@ Dependencies
 
 To measure power on new Intel processors (e.g., Intel Ivy Bridge), the raplread library is required (https://github.com/LPD-EPFL/raplread). By default, compiling the stress tests of LOCKIN will download and build raplread. However, you might need to manually configure raplread for your multi-core. 
 
+Additionally, for the eneryg/power measurements LOCKIN's tests require root priviledges and the `msr` module. You can load `msr` by issuing `sudo modprobe msr`. If `msr` is not available, you can install the `msr-tools` package on Ubuntu systems. 
 
 Scripts
 -------
