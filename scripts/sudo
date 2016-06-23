@@ -1,0 +1,4 @@
+#!/bin/bash
+
+echo "## please give me root access!";
+sudo printf "";

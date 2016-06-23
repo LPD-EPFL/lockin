@@ -1,0 +1,12 @@
+#!/bin/bash
+
+nc=$(nproc);
+echo "# Cores: $nc";
+printf "# Setting: ";
+for c in $(seq 0 1 $(($nc - 1)));
+do
+    printf "$c ";
+    sudo cpufreq-set -c${c} -guserspace
+done;
+
+echo "";

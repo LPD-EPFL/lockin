@@ -1,0 +1,174 @@
+LOCKS_SPIN_TECHNIQUES="MUTEX TAS TTAS";
+LOCKS_BASIC="MUTEX TAS TTAS TICKET MCS UPMUTEX4";
+LOCKS_PLUS="MUTEX MUTEXADAP TAS TTAS TICKET MCS MUTEXEE MUTEXEEF";
+LOCKS="MUTEX TAS TTAS TICKET MCS CLH UPMUTEX UPMUTEX1 UPMUTEX2 UPMUTEX3 UPMUTEX4 LADAP LADAP1 LADAP2 LADAP4 TICKETLINUX TICKETDVFS";
+LOCKS=$LOCKS_PLUS;
+MAKE=make;
+
+# UNAMEN=$(uname -n);
+# if [ $UNAMEN = "lpdpc4" ];
+# then
+#     cores="$(seq 1 1 8)";
+#     LOCKS="USE_SPINLOCK_LOCKS USE_TTAS_LOCKS USE_TICKET_LOCKS USE_MCS_LOCKS USE_CLH_LOCKS USE_ARRAY_LOCKS USE_MUTEX_LOCKS";
+# fi;
+
+# if [ $UNAMEN = "lpdpc34" ];
+# then
+#     cores="$(seq 1 1 8)";
+#     LOCKS="USE_SPINLOCK_LOCKS USE_TTAS_LOCKS USE_TICKET_LOCKS USE_MCS_LOCKS USE_CLH_LOCKS USE_ARRAY_LOCKS USE_MUTEX_LOCKS";
+# fi;
+
+# if [ $UNAMEN = "lpdxeon2680" ];
+# then
+# #    cores="$(seq 1 1 40)";
+#     cores="1 $(seq 5 5 40)";
+#     LOCKS="USE_SPINLOCK_LOCKS USE_TTAS_LOCKS USE_TICKET_LOCKS USE_MCS_LOCKS USE_CLH_LOCKS USE_HTICKET_LOCKS USE_MUTEX_LOCKS";
+# fi;
+
+
+unm=$(uname -n);
+
+if [ $unm = "parsasrv1.epfl.ch" ];
+then
+    run_script="./run"
+fi;
+
+if [ $unm = "maglite" ];
+then
+	max_cores=64;
+elif [ $unm = "lpd48core" ];
+then
+	max_cores=48;
+elif [ $unm = "parsasrv1.epfl.ch" ];
+then
+	max_cores=36;
+elif [ $unm = "diassrv8" ];
+then
+	max_cores=80;
+elif [ $unm = "lpdpc34" ];
+then
+	max_cores=8;
+elif [ $unm = "lpdxeon2680" ];
+then
+	max_cores=40;
+else
+	max_cores=48;
+fi;
+
+
+max_over=$(printf "%.0f" $(echo "${max_cores}*1.5" | bc));
+
+if [ "$cores" = "all" ];
+then
+    cores=$(seq 2 1 $max_cores);
+elif [ "$cores" = "allover" ];
+then
+    cores="$(seq 2 1 $((max_cores-1))) $(seq $max_cores 2 $max_over)";
+elif [ "$cores" = "alloverfast" ];
+then
+    cores="$(seq 2 2 $((max_cores-1))) $(seq $max_cores 4 $max_over)";
+elif [ "$cores" = "allbutone" ];
+then
+    cores=$(seq 2 1 $(($max_cores - 1)));
+elif [ "$cores" = "over" ];
+then
+    if [ $unm = "lpdpc34" ];
+    then
+        cores=$(seq 2 2 $max_over);
+    elif [ $unm = "lpdxeon2680" ];
+    then
+        cores=$(seq 10 10 $max_over);
+    fi;
+elif [ "$cores" = "socket" ];
+then
+    if [ $unm = "maglite" ];
+    then
+	cores=$(seq 8 8 64);
+    elif [ $unm = "parsasrv1.epfl.ch" ];
+    then
+	cores=$(seq 6 6 36);
+    elif [ $unm = "diassrv8" ];
+    then
+	cores=$(seq 10 10 80);
+    elif [ $unm = "lpdpc34" ];
+    then
+	cores=$(seq 2 1 8);
+    elif [ $unm = "lpdxeon2680" ];
+    then
+	cores=$(seq 10 10 40);
+    else
+	cores=$(seq 6 6 48);
+    fi;
+elif [ "$cores" = "socket2" ];
+then
+    if [ $unm = "maglite" ];
+    then
+	cores=$(seq 8 8 64);
+    elif [ $unm = "parsasrv1.epfl.ch" ];
+    then
+	cores=$(seq 6 6 36);
+    elif [ $unm = "diassrv8" ];
+    then
+	cores=$(seq 10 10 80);
+    elif [ $unm = "lpdpc34" ];
+    then
+	cores=$(seq 2 1 8);
+    elif [ $unm = "lpdxeon2680" ];
+    then
+	cores=$(seq 5 5 40);
+    else
+	cores=$(seq 6 6 48);
+    fi;
+elif [ "$cores" = "insocket" ];
+then
+    if [ $unm = "maglite" ];
+    then
+	cores=$(seq 8 8 64);
+    elif [ $unm = "parsasrv1.epfl.ch" ];
+    then
+	cores=$(seq 6 6 36);
+    elif [ $unm = "diassrv8" ];
+    then
+	cores="$(seq 2 1 9) $(seq 10 10 80)";
+    elif [ $unm = "lpdpc34" ];
+    then
+	cores=$(seq 2 1 8);
+    elif [ $unm = "lpdxeon2680" ];
+    then
+	cores="$(seq 2 1 9) $(seq 10 10 40)";
+    else
+	cores="2 3 4 5 $(seq 6 6 48)";
+    fi;
+elif [ "$cores" = "step" ];
+then
+    if [ $unm = "maglite" ];
+    then
+	cores=$(seq 7 1 10);
+    elif [ $unm = "parsasrv1.epfl.ch" ];
+    then
+	cores=$(seq 5 1 8);
+    elif [ $unm = "diassrv8" ];
+    then
+	cores=$(seq 9 1 11);
+    elif [ $unm = "lpdpc34" ];
+    then
+	cores=$(seq 2 1 8);
+    else
+	cores=$(seq 5 1 8);
+    fi;
+elif [ "$cores" = "eights" ];
+then
+    cores=$(seq 8 8 $max_cores);
+elif [ "$cores" = "four" ];
+then
+    cores=$(seq 4 4 $max_cores);
+elif [ "$cores" = "five" ];
+then
+    cores=$(seq 5 5 $max_cores);
+elif [ "$cores" = "twelve" ];
+then
+    cores=$(seq 2 1 12);
+elif [ "$cores" = "two" ];
+then
+    cores=$(seq 2 2 $max_cores);
+fi;

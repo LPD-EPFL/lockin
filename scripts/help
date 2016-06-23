@@ -1,0 +1,65 @@
+# pre
+# string format
+# strings
+# post
+function print_n()
+{
+    printf "$1";
+    for shelp in "$3";
+    do
+	printf "$2" "$shelp";
+    done;
+    printf "$4";
+}
+
+# pre
+# string format
+# strings
+# post
+function print_arr_n()
+{
+    printf "$1";
+    declare -a __ar=("${!3}")
+    for ((__si = 0; __si < ${#__ar[@]}; __si++))
+    do
+	printf "$2" "${__ar[$__si]}";
+    done;
+    printf "$4";
+}
+
+
+# pre
+# repetitions
+# string
+# post
+function print_rep()
+{
+    printf "$1";
+    for s in $(seq 1 1 $2);
+    do
+	printf "$3";
+    done;
+    printf "$4";
+}
+
+# position
+# string
+# e.g. get_n 3 "1 2 X 4"; returns X
+function get_n()
+{
+    str=$(echo "$2" | sed -e 's/^\ //g' -e 's/\ \ */ /g' -e 's/\ $//g');
+    echo $(echo "$str" | cut -d" " -f$1);
+}
+
+# template
+# change
+function get_tmp()
+{
+    echo $(echo $1 | sed "s/XXX/$2/g");
+}
+
+function get_sudo()
+{
+    echo "### Please give me root access!\n";
+    sudo printf "";
+}

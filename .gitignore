@@ -1,0 +1,8 @@
+*.a
+*.o
+*~
+/.nfs000000000814087800000194
+/l1_spin
+/stress_context_switch
+/stress_correct_in
+/stress_in
