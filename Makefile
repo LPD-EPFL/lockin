@@ -121,14 +121,16 @@ libdvfs_set.a: dvfs_set.o include/dvfs_set.h
 dvfs_set.o: FORCE
 	$(CC) -c $(SRC)/dvfs_set.c $(CFLAGS) $(INCLUDES)	
 
+libs: libraplread.a liblockin.a libdvfs_set.a
 
-stress_correct_in: liblockin.a bmarks/stress_correct_in.c
+
+stress_correct_in: libs bmarks/stress_correct_in.c
 	$(CC) $(CFLAGS) $(INCLUDES) bmarks/stress_correct_in.c -o stress_correct_in $(LIBS_IN)
 
-stress_rw_in: liblockin.a bmarks/stress_rw_in.c
+stress_rw_in: libs bmarks/stress_rw_in.c
 	$(CC) $(CFLAGS) $(INCLUDES) bmarks/stress_rw_in.c -o stress_rw_in $(LIBS_IN)
 
-stress_rw_try_in: liblockin.a bmarks/stress_rw_try_in.c
+stress_rw_try_in: libs bmarks/stress_rw_try_in.c
 	$(CC) $(CFLAGS) $(INCLUDES) bmarks/stress_rw_try_in.c -o stress_rw_try_in $(LIBS_IN)
 
 nanosleep: bmarks/nanosleep.c Makefile
@@ -137,57 +139,57 @@ nanosleep: bmarks/nanosleep.c Makefile
 test_cond_timedwait: bmarks/test_cond_timedwait.c 
 	$(CC) -g $(CFLAGS) $(INCLUDES) bmarks/test_cond_timedwait.c -o test_cond_timedwait -pthread
 
-stress_test_in: liblockin.a FORCE
+stress_test_in: libs FORCE
 	$(CC) $(CFLAGS) $(INCLUDES) bmarks/stress_test_in.c -o stress_test_in $(LIBS_IN)
 
-stress_inc_cs: liblockin.a FORCE
+stress_inc_cs: libs FORCE
 	$(CC) $(CFLAGS) $(INCLUDES) bmarks/stress_inc_cs.c -o stress_inc_cs $(LIBS_IN)
 
-stress_phase_in: liblockin.a FORCE
+stress_phase_in: libs FORCE
 	$(CC) $(CFLAGS) $(INCLUDES) bmarks/stress_phase_in.c -o stress_phase_in $(LIBS_IN)
 
-stress_latency_in: liblockin.a FORCE
+stress_latency_in: libs FORCE
 	$(CC) $(CFLAGS) $(INCLUDES) bmarks/stress_latency_in.c -o stress_latency_in $(LIBS_IN)
 
 cdf.o: $(SRC)/cdf.c $(INCLUDE)/cdf.h
 	$(CC) -c $(SRC)/cdf.c $(CFLAGS) $(INCLUDES)	
 
-stress_ldi_in: liblockin.a cdf.o FORCE
+stress_ldi_in: libs cdf.o FORCE
 	$(CC) $(CFLAGS) $(INCLUDES) bmarks/stress_ldi_in.c -o stress_ldi_in cdf.o $(LIBS_IN)
 
-stress_mwait: liblockin.a FORCE
+stress_mwait: libs FORCE
 	$(CC) $(CFLAGS) $(INCLUDES) bmarks/stress_mwait.c -o stress_mwait $(LIBS_IN)
 
-stress_mwait_one: liblockin.a FORCE
+stress_mwait_one: libs FORCE
 	$(CC) $(CFLAGS) $(INCLUDES) bmarks/stress_mwait_one.c -o stress_mwait_one $(LIBS_IN)
 
-stress_mwait_queued: liblockin.a FORCE
+stress_mwait_queued: libs FORCE
 	$(CC) $(CFLAGS) $(INCLUDES) bmarks/stress_mwait_queued.c -o stress_mwait_queued $(LIBS_IN)
 
 
-stress_one_in: liblockin.a libraplread.a FORCE
+stress_one_in: libs libraplread.a FORCE
 	$(CC) $(CFLAGS) $(INCLUDES) bmarks/stress_one_in.c -o stress_one_in $(LIBS_IN)
 
-stress_one_in_libc: liblockin.a FORCE
+stress_one_in_libc: libs FORCE
 	$(CC) $(CFLAGS) $(INCLUDES) bmarks/stress_one_in.c -o stress_one_in_libc -Wl,--rpath=/home/trigonak/code/libs/glibc-2.23/lib/ -Wl,--dynamic-linker=/home/trigonak/code/libs/glibc-2.23/lib/ld-linux-x86-64.so.2 -lpthread -lrt 
 
 
-test_wakeup: FORCE
+test_wakeup: libs FORCE
 	$(CC) $(CFLAGS) $(INCLUDES) bmarks/test_wakeup.c -o test_wakeup $(LIBS_IN)
 
-test_wakeup_barrier: FORCE
+test_wakeup_barrier: libs FORCE
 	$(CC) $(CFLAGS) $(INCLUDES) bmarks/test_wakeup_barrier.c -o test_wakeup_barrier $(LIBS_IN)
 
-test_wakeup_unlock: FORCE
+test_wakeup_unlock: libs FORCE
 	$(CC) $(CFLAGS) $(INCLUDES) bmarks/test_wakeup_unlock.c -o test_wakeup_unlock $(LIBS_IN)
 
-test_spin_unlock: sbarrier.o FORCE
+test_spin_unlock: libs sbarrier.o FORCE
 	$(CC) $(CFLAGS) $(INCLUDES) bmarks/test_spin_unlock.c -o test_spin_unlock sbarrier.o $(LIBS_IN)
 
-test_futex_unlock: sbarrier.o FORCE
+test_futex_unlock: libs sbarrier.o FORCE
 	$(CC) $(CFLAGS) $(INCLUDES) bmarks/test_futex_unlock.c -o test_futex_unlock sbarrier.o $(LIBS_IN)
 
-test_tas_unlock: FORCE
+test_tas_unlock: libs FORCE
 	$(CC) $(CFLAGS) $(INCLUDES) bmarks/test_tas_unlock.c -o test_tas_unlock $(LIBS_IN)
 
 test_mutex_unlock: FORCE
@@ -200,21 +202,20 @@ test_mwait_unlock: FORCE
 	$(CC) $(CFLAGS) $(INCLUDES) bmarks/test_mwait_unlock.c -o test_mwait_unlock -L. -L/home/trigonak/code/glibc/install/lib -lpthread
 
 
-test_wakeup_mutex: FORCE
+test_wakeup_mutex: libs FORCE
 	$(CC) $(CFLAGS) $(INCLUDES) bmarks/test_wakeup_mutex.c -o test_wakeup_mutex $(LIBS_IN)
 
-test_wakeup_mutex2: FORCE
+test_wakeup_mutex2: libs FORCE
 	$(CC) $(CFLAGS) $(INCLUDES) bmarks/test_wakeup_mutex2.c -o test_wakeup_mutex2 $(LIBS_IN)
 
 
 test_queue_time: FORCE
 	$(CC) $(CFLAGS) $(INCLUDES) bmarks/test_queue_time.c -o stress_on_in_QUEUE $(LIBS_IN)
 
-
-stress_queued_in: liblockin.a libdvfs_set.a FORCE
+stress_queued_in: libs FORCE
 	$(CC) $(CFLAGS) $(INCLUDES) bmarks/stress_queued_in.c -o stress_queued_in $(LIBS_IN)
 
-stress_context_switch: liblockin.a libraplread.a libdvfs_set.a FORCE
+stress_context_switch: libs FORCE
 	$(CC) $(CFLAGS) $(INCLUDES) bmarks/stress_context_switch.c -o stress_context_switch $(LIBS_IN)
 
 
@@ -234,7 +235,7 @@ sbarrier.o: $(SRC)/sbarrier.c $(INCLUDE)/sbarrier.h
 cs: power/cs.c Makefile include/atomic_asm.h cdf.o 
 	$(CC) $(CFLAGS) $(INCLUDES) power/cs.c -o context_switch cdf.o $(LIBS) $(PAPI)
 
-dvfs_set: libdvfs_set.a FORCE
+dvfs_set: libs FORCE
 	$(CC) $(CFLAGS) $(INCLUDES) power/dvfs_set.c -o dvfs_set cdf.o $(LIBS) $(PAPI) $(LIBS_IN)
 
 futex: power/futex.c Makefile include/atomic_asm.h cdf.o sbarrier.o FORCE
@@ -273,4 +274,4 @@ energy_sock: src/energy_sock.c
 
 
 clean:
-	rm -f *~ *.o stress_* lib* energy* nanosleep placement_print spin test*
+	rm -f *~ *.o stress_* lib* energy* nanosleep placement_print spin test* l1_*
