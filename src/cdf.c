@@ -29,12 +29,6 @@
 #include "cdf.h"
 #include <math.h>
 
-static double
-sqr(double v)
-{
-  return v * v;
-}
-
 static int
 cdf_comp(const void *elem1, const void *elem2) 
 {
@@ -219,7 +213,6 @@ void
 cdf_boxplot_print(const cdf_boxplot_t* b, const char* title)
 {
   double target[5] = { 100 - b->confidence, 25, 50, 75, b->confidence };
-  int target_cur = 0;
 
   printf("#CDF  ");
   printf("%20s ", "min");
