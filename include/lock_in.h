@@ -163,6 +163,8 @@ lock_in_cs_lat_getticks(void)
 				   the linux kernel */
 #define TICKETDVFS   19
 #define TTASSHARED   20		
+#define GLK          21
+#define GLS          22		
 
 #if LOCK_IN == CLH
 #  if LOCK_IN_VERBOSE == 1
@@ -282,6 +284,10 @@ lock_in_cs_lat_getticks(void)
 #  define MUTEXEE_FAIR 1
 #  include "mutexee_in.h"
 #  include "ttas_rw_in.h"
+#elif LOCK_IN == GLK
+#  include "glk_in.h"
+#elif LOCK_IN == GLS
+#  include "gls_in.h"
 #else
 #  error tell me which lock to use
 #endif

@@ -47,13 +47,13 @@ typedef enum
   extern int dvfs_freq_set_all_max();
   extern int dvfs_freq_set_range(int core_from, int core_to, dvfs_setting_t setting);
 
-  static inline int
+  inline int
   dvfs_freq_set_min()
   {
     return dvfs_freq_set(dvfs_freq_min);
   }
 
-  static inline int
+  inline int
   dvfs_freq_set_max()
   {
     return dvfs_freq_set(dvfs_freq_max);

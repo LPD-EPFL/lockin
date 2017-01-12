@@ -34,6 +34,28 @@ ifeq ($(PAD),1)
   CFLAGS+=-DPADDING=1
 endif
 
+ifeq ($(VERSION),GLS_DD)
+        CFLAGS  += -O2 -g -ggdb -fno-inline -rdynamic -DGLS_DEBUG_MODE=2
+endif
+
+
+ifeq ($(VERSION),GLS)
+        CFLAGS  += -DLOCK_IN=GLS -O3 -DGLS_DEBUG_MODE=1
+endif
+
+ifeq ($(GLS_NOPRINT),1)
+CFLAGS+=-DGLS_NO_PRINT=1
+endif
+
+ifeq ($(VERSION),GLK_DD)
+        CFLAGS  += -rdynamic -DGLS_DEBUG_MODE=3
+        GLS=1
+endif
+
+ifneq ($(GLK_SLE),)
+  CFLAGS+=-DGLK_SLE=${GLK_SLE} -DGLK_ALE=${GLK_ALE} -DGLK_ADP=${GLK_ADP} -DGLK_ITP=${GLK_ITP}
+endif
+
 UNAME:=$(shell uname -n)
 
 ifeq ($(UNAME), lpdxeon2680)
@@ -82,6 +104,25 @@ CC ?= gcc
 LIBS:=-L. -lrt -lpthread -lnuma -l$(RAPL) -lm
 LIBS_IN:=$(LIBS) -llockin -ldvfs_set
 
+GLS_LIBS:=
+LIBS_GLS:=
+
+ifeq ($(LOCK_IN),GLK)
+  GLS_LIBS:=-lmcs_glk_in -lclh_glk_in -lglk
+  LIBS_GLS:=libmcs_glk_in.a libclh_glk_in.a libgls.a libglk.a
+endif
+
+ifeq ($(LOCK_IN),GLS)
+  GLS_LIBS:=-lmcs_glk_in -lclh_glk_in -lgls
+  LIBS_GLS:=libmcs_glk_in.a libclh_glk_in.a libgls.a libglk.a
+endif
+
+ifeq ($(LOCK_IN),MCS)
+  GLS_LIBS:=-lmcs_glk_in 
+  LIBS_GLS:=libmcs_glk_in.a
+endif
+
+LIBS_IN:=$(LIBS_IN) $(GLS_LIBS)
 
 TOP:=$(patsubst %/,%,$(dir $(lastword $(MAKEFILE_LIST))))
 
@@ -89,6 +130,14 @@ SRC:=$(TOP)/src
 INCLUDE:=$(TOP)/include
 
 INCLUDES:=-I$(INCLUDE)
+OBJ_FILES:=mcs.o clh.o ttas.o rw_ttas.o ticket.o
+
+GLS_INCLUDES:=-I$(TOP)/external/include
+GLS_OBJ_FILES:=gls.o clht_lock_pointer.o
+GLS_BUILD_LIBS:=$(GLS_LIBS) -L$(TOP)/external/lib -lssmem
+
+
+
 
 all: stress_one_in stress_test_in stress_latency_in stress_ldi_in\
 	stress_queued_in stress_inc_cs stress_phase_in
@@ -121,7 +170,7 @@ libdvfs_set.a: dvfs_set.o include/dvfs_set.h
 dvfs_set.o: FORCE
 	$(CC) -c $(SRC)/dvfs_set.c $(CFLAGS) $(INCLUDES)	
 
-libs: libraplread.a liblockin.a libdvfs_set.a
+libs: libraplread.a liblockin.a libdvfs_set.a $(LIBS_GLS)
 
 
 stress_correct_in: libs bmarks/stress_correct_in.c
@@ -271,6 +320,38 @@ energy: src/energy.c
 
 energy_sock: src/energy_sock.c
 	$(CC) $(INCLUDES) -L. -O3 -o energy_sock src/energy_sock.c -lm -l$(RAPL) -lm
+
+# GLS / GLK
+
+libmcs_glk_in.a: mcs_glk_in.o include/mcs_glk_impl.h
+	ar -r libmcs_glk_in.a mcs_glk_in.o include/mcs_glk_impl.h
+
+mcs_glk_in.o: FORCE
+	$(CC) -D_GNU_SOURCE $(CFLAGS) $(INCLUDES) -c src/mcs_glk_in.c
+
+libclh_glk_in.a: clh_glk_in.o include/clh_glk_impl.h
+	ar -r libclh_glk_in.a clh_glk_in.o include/clh_glk_impl.h
+
+clh_glk_in.o: FORCE
+	$(CC) -D_GNU_SOURCE $(CFLAGS) $(INCLUDES) -c src/clh_glk_in.c
+
+
+
+
+libgls.a: gls.o include/gls_in.h clht_lock_pointer.o glk.o mcs_glk_in.o
+	ar -r libgls.a gls.o clht_lock_pointer.o include/gls_in.h glk.o mcs_glk_in.o
+
+libglk.a: glk.o include/glk_in.h
+	ar -r libglk.a glk.o include/glk_in.h
+
+gls.o: src/gls.c clht_lock_pointer.o
+	$(CC) $(LOCK_VERSION) $(CLHT_TYPE) -D_GNU_SOURCE $(CFLAGS) $(INCLUDES) -c src/gls.c $(GLS_BUILD_LIBS)
+
+glk.o: FORCE
+	$(CC) -D_GNU_SOURCE $(CFLAGS) $(INCLUDES) -c src/glk.c
+
+clht_lock_pointer.o: FORCE
+	$(CC) $(LOCK_VERSION) -D_GNU_SOURCE $(CFLAGS) $(INCLUDES) -c src/clht_lock_pointer.c $(LIBS_IN) $(GLS_BUILD_LIBS)
 
 
 clean:

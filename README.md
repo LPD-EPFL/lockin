@@ -12,11 +12,30 @@ LOCKIN currently only works on x86 Linux platforms.
 **(We will soon cleanup the LOCKIN code further. Please report any bugs you might find.)**
 
 * Website             : http://lpd.epfl.ch/site/lockin
-* Author              : Vasileios Trigonakis <vasileios.trigonakis@epfl.ch>,
+* Author              : Vasileios Trigonakis <vasileios.trigonakis@epfl.ch>
 * Related Publications:
-  * [*Unlocking Energy*](https://www.usenix.org/conference/atc16/technical-sessions/presentation/falsafi),  
+  - [*Unlocking Energy*](https://www.usenix.org/conference/atc16/technical-sessions/presentation/falsafi),  
     Babak Falsafi, Rachid Guerraoui, Javier Picorel, Vasileios Trigonakis (alphabetical order),  
-  USENIX ATC 2016
+    USENIX ATC 2016
+
+GLS
+====
+
+GLS is a middleware that makes lock-based programming simple and effective. GLS offers the classic lock-unlock interface of locks. However, in contrast to classic lock libraries, GLS does not require any effort from the programmer for allocating and initializing locks, nor for selecting the appropriate locking strategy. With GLS, all these intricacies of locking are hidden from the programmer. GLS is based on GLK, a generic lock algorithm that dynamically adapts to the contention level on the lock object. GLK is able to deliver the best performance among simple spinlocks, scalable queue-based locks, and blocking locks. Furthermore, GLS offers several debugging options for easily detecting various lock-related issues, such as deadlocks. 
+
+Working with GLK and GLS is as simple as including the glk.h/gls.h header files and linking with either libglk (-lglk) or libgls (-lgls).
+
+GLS currently only works on x86 Linux Platforms.
+
+**(We will soon cleanup the GLS code further. Please report any bugs you might find.)**
+
+* Website             : http://lpd.epfl.ch/site/gls
+* Authors             : Georgios Chatzopoulos <georgios.chatzopoulos@epfl.ch>, Vasileios Trigonakis <vasileios.trigonakis@epfl.ch>
+* Related Publications:
+  - [*Locking Made Easy*](https://dl.acm.org/citation.cfm?id=2988357),
+    Jelena Antic, Georgios Chatzopoulos, Rachid Guerraoui, Vasileios Trigonakis (alphabetical order),  
+    Middleware 2016
+
 
 
 Lock Algorithms
@@ -34,6 +53,8 @@ You can select the lock algorithm to use in `lock_in.h`, or by passing the `LOCK
 - `MUTEXEE`: our new optimized `MUTEX` algorithm;
 - `MUTEXEEF`: `MUTEXEE` with bounded maximum tail latencies; 
 - `LOCKPROF`: a simple lock profiler that prints stats about contention.
+- `GLK`: the generic lock algorithm that adapts  to the contention levels and performs in either TICKET, MCS, or MUTEX mode.
+- `GLS`: the generic locking service API that manages locks. GLS uses the GLK algorithm.
 
 `lock_in.h` includes more lock implementations (experimental).
 
