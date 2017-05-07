@@ -116,9 +116,10 @@ extern "C" {
 
 #if defined(PAUSE_IN)
 #  undef PAUSE_IN
+#endif
 #  define PAUSE_IN()				\
   asm volatile ("mfence");
-#endif
+
 
   static inline void
   mutexee_cdelay(const int cycles)
